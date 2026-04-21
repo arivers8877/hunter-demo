@@ -1,63 +1,26 @@
-#Leakwallet Hunter - Demo Version
+import os
+import logging
 
-import time
-import random
-
-
-def print_header():
-  print("===================================")
-  print("Leakwallet Hunter (Demo Version)")
-  print("===================================")
+# Function to generate a private key
+import secrets
 
 
-def generate_random_phrase():
-  wordlist = [
-      'abandon', 'ability', 'able', 'about', 'above', 'absent', 'absorb',
-      'abstract', 'absurd', 'abuse'
-  ]
-  return " ".join(random.choices(wordlist, k=12))
+def generate_private_key():
+    return secrets.token_hex(32)  # Generate a random 64 character hex string as a private key
 
+# Setup the winners log
+winners_log_path = 'winners.log'
+if not os.path.exists(winners_log_path):
+    with open(winners_log_path, 'w') as f:
+        f.write('Address,PrivateKey,RecoveryPhrase,Balance,Timestamp\n')
 
-def generate_random_address():
-  return "1" + "".join(random.choice("0123456789abcdef") for _ in range(33))
+# Example winner data
+winner_address = 'sample_address'
+private_key = generate_private_key()
+recovery_phrase = 'sample_recovery_phrase'
+balance = 100.0
+timestamp = '2026-04-21 04:25:42'
 
-
-def random_winner_balance():
-  return f"{random.uniform(0, 1):.8f} BTC"
-
-
-def run_program():
-  print_header()
-
-  checked = 0
-  winners = 0
-  total_balance = 0
-
-  while True:
-    checked += 1
-    recovery_phrase = generate_random_phrase()
-    address = generate_random_address()
-    balance = "0 BTC"
-
-    print(
-        f"\n{checked} | Address: {address} | Balance: {balance} | Phrase: {recovery_phrase}"
-    )
-
-    if checked % 10000 == 0:
-      winbal = random_winner_balance()
-      winners += 1
-      total_balance += float(winbal.split()[0])
-      print(
-          f"\n{checked} | Address: {address} | Balance: {winbal} | Phrase: {recovery_phrase}"
-      )
-      print(
-          f"\n[Winner Found!] Total Winners: {winners} | Total Balance: {total_balance:.8f} BTC"
-      )
-
-      time.sleep(10)
-      print("\n[Restarting Program...]\n")
-      time.sleep(1)
-
-
-if __name__ == "__main__":
-  run_program()
+# Log the winner
+with open(winners_log_path, 'a') as f:
+    f.write(f'{winner_address},{private_key},{recovery_phrase},{balance},{timestamp}\n')
